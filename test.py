@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from datetime import date
+import datetime
 
 if __name__ == '__main__':
-    # Список работников.
-    workers = []
+    print("help - список всех команд")
+    # Список людей.
+    humans = []
 
     # Организовать бесконечный цикл запроса команд.
     while True:
@@ -18,23 +19,26 @@ if __name__ == '__main__':
             break
 
         elif command == 'add':
-            # Запросить данные о работнике.
-            name = input("Фамилия и инициалы? ")
-            post = input("Должность? ")
-            year = int(input("Год поступления? "))
+            # Запросить данные о человеке.
+            surname = input("Фамилия: ")
+            name = input("Имя: ")
+            zodiak = input("Знак Зодиака: ")
+            date_str = input("Введите дату выпуска (dd/mm/yyyy)\n")
+            date = datetime.datetime.strptime(date_str, '%d/%m/%Y').date()
 
             # Создать словарь.
-            worker = {
+            human = {
+                'surname': surname,
                 'name': name,
-                'post': post,
-                'year': year,
+                'zodiak': zodiak,
+                'date': date
             }
 
             # Добавить словарь в список.
-            workers.append(worker)
+            humans.append(human)
             # Отсортировать список в случае необходимости.
-            if len(workers) > 1:
-                workers.sort(key=lambda item: item.get('name', ''))
+            if len(humans) > 1:
+                humans.sort(key=lambda item: item.get('date', ''))
 
         elif command == 'list':
             # Заголовок таблицы.
@@ -42,62 +46,63 @@ if __name__ == '__main__':
                 '-' * 4,
                 '-' * 30,
                 '-' * 20,
-                '-' * 8
+                '-' * 15
             )
             print(line)
             print(
-                '| {:^4} | {:^30} | {:^20} | {:^8} |'.format(
+                '| {:^4} | {:^30} | {:^20} | {:^15} |'.format(
                     "№",
-                    "Ф.И.О.",
-                    "Должность",
-                    "Год"
+                    "Фамилия и имя",
+                    "Знак Зодиака",
+                    "Дата рождения"
                 )
             )
             print(line)
 
             # Вывести данные о всех сотрудниках.
-            for idx, worker in enumerate(workers, 1):
+            for idx, worker in enumerate(humans, 1):
+                date = worker.get('date', '')
                 print(
-                    '| {:>4} | {:<30} | {:<20} | {:>8} |'.format(
+                    '| {:^4} | {:<14} {:<15} | {:<20} | {}{} |'.format(
                         idx,
+                        worker.get('surname', ''),
                         worker.get('name', ''),
-                        worker.get('post', ''),
-                        worker.get('year', 0)
+                        worker.get('zodiak', ''),
+                        date,
+                        ' ' * 5
                     )
                 )
 
             print(line)
 
         elif command.startswith('select '):
-            # Получить текущую дату.
-            today = date.today()
-
-            # Разбить команду на части для выделения номера года.
-            parts = command.split(' ', maxsplit=1)
-            # Получить требуемый стаж.
-            period = int(parts[1])
+            # Получить введенный ЗЗ
+            addedzz = command[7:]
 
             # Инициализировать счетчик.
             count = 0
             # Проверить сведения работников из списка.
-            for worker in workers:
-                if today.year - worker.get('year', today.year) >= period:
+            for human in humans:
+                if human.get('zodiak', '') == addedzz:
                     count += 1
                     print(
-                        '{:>4}: {}'.format(count, worker.get('name', ''))
+                        '{:>4}: {} {}'.format(
+                            count, human.get('surname', ''),
+                            human.get('name', '')
+                        )
                     )
 
             # Если счетчик равен 0, то работники не найдены.
             if count == 0:
-                print("Работники с заданным стажем не найдены.")
+                print("Люди с таким ЗЗ не найдены.")
 
         elif command == 'help':
             # Вывести справку о работе с программой.
             print("Список команд:\n")
-            print("add - добавить работника;")
-            print("list - вывести список работников;")
-            print("select <стаж> - запросить работников со стажем;")
-            print("help - отобразить справку;")
+            print("add - добавить человека;")
+            print("list - вывести список людей;")
+            print("help - список всех команд;")
             print("exit - завершить работу с программой.")
+
         else:
             print(f"Неизвестная команда {command}", file=sys.stderr)
