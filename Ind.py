@@ -23,7 +23,7 @@ if __name__ == '__main__':
             surname = input("Фамилия: ")
             name = input("Имя: ")
             zodiak = input("Знак Зодиака: ")
-            date_str = input("Введите дату выпуска (dd/mm/yyyy)\n")
+            date_str = input("Введите дату рождения (dd/mm/yyyy)\n")
             date = datetime.datetime.strptime(date_str, '%d/%m/%Y').date()
 
             # Создать словарь.
@@ -31,14 +31,15 @@ if __name__ == '__main__':
                 'surname': surname,
                 'name': name,
                 'zodiak': zodiak,
-                'date': date
+                'date': date,
+                'month': date.month
             }
 
             # Добавить словарь в список.
             humans.append(human)
             # Отсортировать список в случае необходимости.
             if len(humans) > 1:
-                humans.sort(key=lambda item: item.get('d.m', ''))
+                humans.sort(key=lambda item: item.get('month', ''))
 
         elif command == 'list':
             # Заголовок таблицы.
@@ -77,13 +78,13 @@ if __name__ == '__main__':
 
         elif command.startswith('select '):
             # Получить введенный месяц
-            month = month(input())
+            zod = command[7:]
 
             # Инициализировать счетчик.
             count = 0
             # Проверить сведения работников из списка.
             for human in humans:
-                if human.get('month', '') == month:
+                if human.get('zodiak', '') == zod:
                     count += 1
                     print(
                         '{:>4}: {} {}'.format(
@@ -94,7 +95,7 @@ if __name__ == '__main__':
 
             # Если счетчик равен 0, то работники не найдены.
             if count == 0:
-                print("Люди с таким ЗЗ не найдены.")
+                print("Людей, родившихся в таком месяце нет.")
 
         elif command == 'help':
             # Вывести справку о работе с программой.
